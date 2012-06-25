@@ -305,7 +305,7 @@ parseDirectives = (code) ->
 
 stripExt = (filePath) ->
   if path.extname(filePath) in jsExts()
-    filePath[0...filePath.lastIndexOf('.')]
+    stripExt filePath[0...filePath.lastIndexOf('.')]
   else
     filePath
 
