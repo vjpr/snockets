@@ -240,12 +240,12 @@ module.exports = class Snockets
       )
 
       logger.debug "
-        \n---Cannot find file in same directory as it was required from.
+        \n--- Cannot find file in same directory as it was required from.
         Checking other roots."
 
       # Search for 'relPath` in a matching source root or sub-directory
       # of that source root. (`@absPath()` will locate the matching source root)
-      logger.debug "Directory containing file or file itself: " + @absPath relPath
+      logger.debug "Checking directory containing file or file itself: " + @absPath relPath
       @readdir path.dirname(@absPath relPath), flags, (err, files) =>
         return callback err if err
         return if tryFiles relPath, (for file in files
@@ -329,7 +329,7 @@ module.exports = class Snockets
       dir = path.dirname(candidate)
       if exists(dir) and fs.statSync(dir).isDirectory()
         for file in fs.readdirSync(dir)
-          logger.debug stripExt(file) + ' > ' + path.basename(candidate)
+          #logger.debug stripExt(file) + ' > ' + path.basename(candidate)
           return true if stripExt(file) is path.basename(candidate)
 
     result
@@ -358,6 +358,11 @@ module.exports = class Snockets
 #
 module.exports.compilers = compilers =
   coffee:
+    match: /\.js$/
+    compileSync: (sourcePath, source) ->
+      CoffeeScript.compile source, {filename: sourcePath}
+
+  'js.coffee':
     match: /\.js$/
     compileSync: (sourcePath, source) ->
       CoffeeScript.compile source, {filename: sourcePath}
@@ -427,7 +432,7 @@ getExt = (filePath) ->
 # (i.e. `.js.coffee` before `.coffee`)
 # Default: `[ '.coffee', '.js' ]`
 jsExts = ->
-  exts = (ext for ext of compilers).concat 'js'
+  exts = (ext for ext of compilers).concat('js')
   sortedExts = _.sortBy exts, (v) -> -(v.split('.').length - 1)
   (".#{ext}" for ext in sortedExts)
 
