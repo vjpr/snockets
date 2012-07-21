@@ -39,7 +39,8 @@ task 'test', 'Run the test suite (and re-run if anything changes)', ->
     do runTests = ->
       suite?.kill()
       suiteNames = [
-        'integration'
+        'unit'
+      , 'integration'
       ]
       suiteIndex = 0
       do runNextTestSuite = ->

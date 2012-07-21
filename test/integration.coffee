@@ -22,11 +22,38 @@ testSuite =
       test.deepEqual snockets.depGraph.getChain('testing.js'), ['1.2.3.coffee']
       test.done()
 
+  'Dependencies with multiple extensions when additional compilers are used are accepted': (test) ->
+    # Add compiler for `js.coffee` files
+    Snockets.compilers['js.coffee'] =
+      match: /\.js.coffee$/
+      compileSync: Snockets.compilers.coffee.compileSync
+
+    snockets.scan 'new/a.coffee', (err) ->
+      throw err if err
+      test.deepEqual snockets.depGraph.getChain('new/a.coffee')
+      , ['new/1.2.3.4.js.coffee']
+      test.done()
+
   'Dependencies can have subdirectory-relative paths': (test) ->
     snockets.scan 'song/loveAndMarriage.js', (err) ->
       throw err if err
       test.deepEqual snockets.depGraph.getChain('song/loveAndMarriage.js'), ['song/horseAndCarriage.coffee']
       test.done()
+
+  'Support multiple source roots': (test) ->
+    snockets2 = new Snockets
+      src: [src + '/multipleRoots/vendor', src + '/multipleRoots/assets', src]
+    snockets2.scan 'multipleRoots/test.coffee', (err) ->
+      throw err if err
+      test.deepEqual snockets2.depGraph.getChain('multipleRoots/test.coffee')
+      , ['jquery.coffee', 'app.coffee']
+      test.done()
+
+  #'Dependencies can have explicit paths': (test) ->
+  #  snockets.scan 'new/explicit/explicit.coffee', (err) ->
+  #    throw err if err
+  #    test.deepEqual snockets.depGraph.getChain('1.2.3.coffee'), ['1.2.3.coffee']
+  #    test.done()
 
   'Multiple dependencies can be declared in one require directive': (test) ->
     snockets.scan 'poly.coffee', (err) ->
