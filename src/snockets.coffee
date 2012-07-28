@@ -75,6 +75,7 @@ module.exports = class Snockets
       catch e
         if callback then return callback e else throw e
 
+      #console.time 'Compilation time: ' + filePath
       compiledChain = for link in chain.concat filePath
         o = {}
         if @compileFile link
@@ -83,6 +84,7 @@ module.exports = class Snockets
           o.filename = link
         o.js = @cache[link].js.toString 'utf8'
         o
+      #console.timeEnd 'Compilation time: ' + filePath
 
       callback? null, compiledChain, graphChanged
       compiledChain
@@ -242,6 +244,9 @@ module.exports = class Snockets
       logger.debug "
         \n--- Cannot find file in same directory as it was required from.
         Checking other roots."
+
+      # Skip absolute path search
+      #return callback new Error("File not found: '#{filename}'")
 
       # Search for 'relPath` in a matching source root or sub-directory
       # of that source root. (`@absPath()` will locate the matching source root)

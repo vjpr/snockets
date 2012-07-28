@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/TrevorBurnham/snockets.git"
   },
-  "main": "lib/snockets.js",
+  "main": "src/snockets.coffee",
   "dependencies": {
     "coffee-script": ">=1.1.2",
     "dep-graph": "1.1.0",
